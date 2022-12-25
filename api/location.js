@@ -5,6 +5,6 @@ const app=express();
 
 var comments={};
 
-app.get('/api/comments/',(req,res)=>{
+app.get('/',(req,res)=>{
   res.json(comments);
 });
