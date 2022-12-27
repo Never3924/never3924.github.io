@@ -7,10 +7,10 @@ function weather(){
         })
         .then((resj)=>{
             var pre=resj.response.location[0].prefecture;
-            pre.replace("都","");
-            pre.replace("道","");
-            pre.replace("府","");
-            pre.replace("県","");
+            pre=pre.replace("都","");
+            pre=pre.replace("道","");
+            pre=pre.replace("府","");
+            pre=pre.replace("県","");
             console.log(pre);
         })
     },function(res){
