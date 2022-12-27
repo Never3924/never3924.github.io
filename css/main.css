@@ -9,6 +9,16 @@
 
 .body{
   background-color:#dddddd;
+
+  /*
+  aタグの下の線を無効化する。
+
+    a{
+      text-decoration:none;
+    }
+    
+  でも良い。
+  */
   text-decoration: none;
   color:#000000;
 }
