@@ -6,7 +6,7 @@ function weather(){
             return res.json();
         })
         .then((resj)=>{
-            var pre='resj.response.location[0].prefecture';
+            var pre=resj.response.location[0].prefecture;
             pre.replace("都","");
             pre.replace("道","");
             pre.replace("府","");
