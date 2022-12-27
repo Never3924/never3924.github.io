@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.head.innerHTML+='<link href="https://fonts.googleapis.com/css?family=M+PLUS+1p" rel="stylesheet"></link>';
   document.head.innerHTML+='<link rel="icon" type="image/png" href="/img/paper.png"></link>';
   
-  //body
+  //body 
   var newhead=document.createElement('header');
   newhead.id='header';
   newhead.style.backgroundColor='#0062ff';
