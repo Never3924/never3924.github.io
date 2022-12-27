@@ -1,4 +1,4 @@
-function weather(){
+/*function weather(){
     navigator.geolocation.getCurrentPosition(function(res){
         fetch('https://geoapi.heartrails.com/api/json?method=searchByGeoLocation&x='+res.coords.longitude+'&y='+res.coords.latitude)
         .then((res)=>{
@@ -95,4 +95,8 @@ function weather(){
     },function(res){
         document.getElementById('body').innerHTML+='取得できませんでした...';
     });
+}*/
+
+function sidebarinit(){
+
 }
