@@ -17,7 +17,7 @@
       text-decoration:none;
     }
 
-  でも良い。(((じゃあそうしろよ
+  でも良い。
   */
   text-decoration: none;
   color:#000000;
@@ -28,7 +28,7 @@
 }
 
 #sidebar{
-  width:200px;
-  position:fixed;
+  /*width:200px;*/
+  position:sticky;
   left:0px;
 }
