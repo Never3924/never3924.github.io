@@ -6,7 +6,7 @@ function weather(){
             return res.json();
         })
         .then((resj)=>{
-            console.log(resj.response);
+            console.log(resj.response.location[0].prefecture);
         })
     },function(res){
         document.getElementById('body').innerHTML+='取得できませんでした...';
