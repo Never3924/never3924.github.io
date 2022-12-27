@@ -1,1 +1,11 @@
+.section{
+  border-radius:25px;
+}
 
+.title{
+  background-color:#0062ff;
+}
+
+.body{
+  background-color:#dddddd;
+}
