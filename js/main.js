@@ -77,7 +77,7 @@ function weather(){
 
             var answer=code[prefectures.indexOf(pre)];
 
-            //weather_get
+            //weather_get!!!!!!!
             fetch('https://weather.tsukumijima.net/api/forecast/city/'+answer)
             .then((res)=>{
                 return res.json();
