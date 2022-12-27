@@ -16,7 +16,7 @@
     a{
       text-decoration:none;
     }
-    
+
   でも良い。
   */
   text-decoration: none;
@@ -25,4 +25,10 @@
 
 *{
   font-family:"M PLUS 1p";
+}
+
+#sidebar{
+  width:100px;
+  position:fixed;
+  left:0px;
 }
