@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   //body
   var newhead=document.createElement('header');
   newhead.id='header';
-  newhead.style.backgroundColor='#349934';
+  newhead.style='background-color:#349934;color:#ffffff;font-weight:10px;text-decoration:none;position:absolute;top:0px;left:0px;height:100px;';
   
   var newa=document.createElement('a');
   newa.href='/';
