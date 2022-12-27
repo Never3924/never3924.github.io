@@ -6,14 +6,22 @@ document.addEventListener('DOMContentLoaded',()=>{
   //body
   var newhead=document.createElement('header');
   newhead.id='header';
-  newhead.style='background-color:#0062ff;font-weight:10px;position:absolute;top:0px;left:0px;width:100%;font-size:30px;';
+  newhead.style.backgroundColor='#0062ff';
+  newhead.style.fontWeight='10px';
+  newhead.style.position='absolute';
+  newhead.style.top='0px';
+  newhead.style.left='0px';
+  newhead.style.width='100%';
   
   var newa=document.createElement('a');
   newa.href='/';
   newa.id='hddiv';
-  newa.style='text-align:center;text-decoration:none;color:#ffffff;';
+  newa.style.textAlign='center';
+  newa.style.textDecoration='none';
+  newa.style.color='#ffffff';
   
   var newhdd=document.createElement('div');
+  newhdd.style.fontSize='30px';
   newhdd.id='text';
   newhdd.textContent='Never3924 Blog (?)'
   
