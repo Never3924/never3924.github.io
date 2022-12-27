@@ -6,12 +6,12 @@ document.addEventListener('DOMContentLoaded',()=>{
   //body
   var newhead=document.createElement('header');
   newhead.id='header';
-  newhead.style='background-color:#0062ff;color:#ffffff;font-weight:10px;text-decoration:none;position:absolute;top:0px;left:0px;height:100px;';
+  newhead.style='background-color:#0062ff;color:#ffffff;font-weight:10px;position:absolute;top:0px;left:0px;height:100px;';
   
   var newa=document.createElement('a');
   newa.href='/';
   newa.id='hddiv';
-  newa.style='text-align:center;weight:100%;';
+  newa.style='text-align:center;text-decoration:none;';
   
   var newhdd=document.createElement('div');
   newhdd.id='text';
