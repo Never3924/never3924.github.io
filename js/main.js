@@ -85,7 +85,7 @@ function weather(){
             .then((resj)=>{
                 console.log(resj);
                 document.getElementById('title').innerHTML=resj.title;
-                document.getElementById('weaImg').innerHTML="<img src='"+resj.forecasts[0].image.url+"title='"+resj.forecasts[0].image.title+"'></img>";
+                document.getElementById('weaImg').innerHTML="<img src='"+resj.forecasts[0].image.url+"' title='"+resj.forecasts[0].image.title+"'></img>";
                 document.getElementById('body').innerHTML+="<p>"+resj.forecasts[0].detail.weather.replace("　"," ")+"</p>";
                 document.getElementById("body").innerHTML+="<p>"+resj.publicTime+"<br>"+resj.publishingOffice+"</p>";
                 document.getElementById("body").innerHTML+="<p><a href='"+resj.link+"'>もっと詳しく</a></p>";
