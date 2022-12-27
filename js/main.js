@@ -1,6 +1,5 @@
 function weather(){
     navigator.geolocation.getCurrentPosition(function(res){
-        console.log('lat:'+res.coords.latitude+',lon:'+res.coords.longitude);
         fetch('https://geoapi.heartrails.com/api/json?method=searchByGeoLocation&x='+res.coords.longitude+'&y='+res.coords.latitude)
         .then((res)=>{
             return res.json();
