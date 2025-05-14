@@ -1,0 +1,17 @@
+.icon {
+    border: 1px solid var(--border-color);
+    border-radius: 100%;
+    padding: 6px;
+
+    display: inline-block;
+    text-align: center;
+}
+
+.link {
+    color: var(--accent-color);
+    border-bottom: 1px solid var(--accent-color);
+}
+
+.p {
+    margin-bottom: 20px;
+}

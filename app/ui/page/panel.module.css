@@ -1,0 +1,32 @@
+.panel {
+    border-radius: 10px;
+
+    width: 250px;
+    height: 300px;
+
+    border: 1px solid var(--border-color);
+    background-color: var(--background-color);
+
+    transition: all 0.2s ease;
+
+    display: inline-block;
+
+    margin-top: 10px;
+    margin-right: 20px;
+
+    vertical-align: top;
+
+    padding: 10px;
+}
+
+.panel:hover {
+    transform: translateY(-10px);
+    cursor: pointer;
+
+    box-shadow: 0 5px 10px 5px var(--border-color);
+}
+
+.image {
+    margin-bottom: 5px;
+    width: 100%;
+}

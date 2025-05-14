@@ -1,0 +1,41 @@
+.home {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+
+    width: 100%;
+
+    padding: 10px 10px;
+
+    background-color: transparent;
+
+    transition: 0.2s ease all;
+
+    user-select: none;
+
+    display: block;
+
+    margin-bottom: 0;
+}
+
+.home:not(.active):hover {
+    background-color: rgba(var(--accent-color-rgb), 0.5);
+    cursor: pointer;
+}
+
+.active {
+    background-color: rgba(var(--accent-color-rgb), 1);
+}
+
+.div {
+    display: inline-block;
+}
+
+.span {
+    margin-left: 10px;
+    vertical-align: middle;
+}
+
+.aboutme {
+    position: absolute;
+    bottom: 10px;
+}

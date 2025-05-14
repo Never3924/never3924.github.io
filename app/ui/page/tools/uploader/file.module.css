@@ -1,0 +1,16 @@
+.link {
+    border-bottom: 1px solid var(--border-color);
+
+    position: relative;
+
+    display: block;
+    width: 100%;
+
+    transition: all ease 0.2s;
+
+    margin-bottom: 10px;
+}
+
+.link:hover {
+    padding-left: 10px;
+}
