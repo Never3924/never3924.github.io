@@ -11,8 +11,8 @@ export function File({ link, title }: Props) {
         return "tools/uploader/file" + link;
     }
     return (
-        <Link href={access()} download={true} className={styles.link}>
+        <a href={access()} download={true} className={styles.link}>
             {title}
-        </Link>
+        </a>
     );
 }
