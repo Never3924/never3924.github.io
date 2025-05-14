@@ -8,10 +8,10 @@ type Props = {
 
 export function File({ link, title }: Props) {
     function access() {
-        return "download?file=uploader/file" + link;
+        return "/file" + link;
     }
     return (
-        <a href={access()} download={true} className={styles.link}>
+        <a download className={styles.link} href={access()}>
             {title}
         </a>
     );
