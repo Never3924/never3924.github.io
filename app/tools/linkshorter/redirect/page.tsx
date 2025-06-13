@@ -3,7 +3,7 @@
 import Base from "@/app/base";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { JSX } from "react";
+import { JSX, Suspense } from "react";
 
 export default function uploader() {
     const decoder = new TextDecoder();
@@ -55,8 +55,10 @@ export default function uploader() {
     }
 
     return (
-        <Base title={"外部のページへ飛びます"} description="">
-            {body()}
-        </Base>
+        <Suspense>
+            <Base title={"外部のページへ飛びます"} description="">
+                {body()}
+            </Base>
+        </Suspense>
     );
 }
