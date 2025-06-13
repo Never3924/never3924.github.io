@@ -12,6 +12,14 @@ export default function Home() {
             >
                 <p>適当なファイルをアップロードします。</p>
             </Panel>
+
+            {/* これから実装する <Panel
+                title="リンク短縮"
+                image={uploader}
+                link="/tools/linkshorter"
+            >
+                <p>長いリンクを圧縮して短くします。</p>
+            </Panel> */}
         </Base>
     );
 }
