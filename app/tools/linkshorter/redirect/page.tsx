@@ -43,7 +43,9 @@ export default function uploader() {
     async function body(): Promise<JSX.Element> {
         const url = await getURL();
 
-        const invalidDOM = <p>リンクが無効です。</p>;
+        const invalidDOM = (
+            <p>リンクが無効です。base64のリンクしか許可していません。</p>
+        );
 
         if (url === null) {
             return invalidDOM;
