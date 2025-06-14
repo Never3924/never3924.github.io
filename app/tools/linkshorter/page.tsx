@@ -1,7 +1,7 @@
 "use client";
 
 import Base from "@/app/base";
-import styles from "./linkshorter.module.css";
+import styles from "@/app/ui/page/tools/linkshorter/linkshorter.module.css";
 
 export default function uploader() {
     // https://zenn.dev/mizchi/articles/browser-gzip-inflate-deflate
