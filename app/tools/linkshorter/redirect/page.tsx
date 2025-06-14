@@ -8,6 +8,7 @@ import { JSX, Suspense } from "react";
 export default function uploader() {
     const decoder = new TextDecoder();
 
+    // https://zenn.dev/mizchi/articles/browser-gzip-inflate-deflate
     async function decompress(buffer: ArrayBuffer): Promise<string> {
         const ds = new DecompressionStream("gzip");
         const decompressedStream = new Blob([buffer]).stream().pipeThrough(ds);
@@ -25,14 +26,16 @@ export default function uploader() {
         return bytes.buffer;
     }
 
-    function getURL(): Promise<string> | null {
+    async function getURL(): Promise<string | null> {
         const searchParams = useSearchParams();
         const link = searchParams.get("link");
 
         if (link === null) return null;
 
         const buffer = base64ToArrayBuffer(link);
-        const decompress_link = decompress(buffer);
+        const decompress_link = await decompress(buffer);
+
+        if (!decompress_link.startsWith("data:")) return null;
 
         return decompress_link;
     }
@@ -48,8 +51,12 @@ export default function uploader() {
 
         return (
             <div>
-                <p>以下のサイトを開きます。</p>
-                <Link href={url}>{url}</Link>;
+                <p>
+                    以下のサイトを開きます。※移動先のリンクへは自己責任で移動してください。
+                    <br />
+                    何かしら被害にあっても責任を負いません。
+                </p>
+                <Link href={url}>{url}</Link>
             </div>
         );
     }
