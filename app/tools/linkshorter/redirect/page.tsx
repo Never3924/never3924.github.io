@@ -54,11 +54,16 @@ export default function uploader() {
         return (
             <div>
                 <p>
-                    以下のサイトを開きます。※移動先のリンクへは自己責任で移動してください。
-                    <br />
-                    何かしら被害にあっても責任を負いません。
+                    以下のサイトを開きます。
+                    <strong>
+                        ※移動先のリンクへは自己責任で移動してください。
+                        <br />
+                        何かしら被害にあっても責任は負いません。
+                    </strong>
                 </p>
-                <Link href={url}>{url}</Link>
+                <a href={url} target="_blank" rel="noopener noreferrer">
+                    {url}
+                </a>
             </div>
         );
     }

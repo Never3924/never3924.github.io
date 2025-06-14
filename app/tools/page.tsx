@@ -13,13 +13,17 @@ export default function Home() {
                 <p>適当なファイルをアップロードします。</p>
             </Panel>
 
-            {/* これから実装する <Panel
-                title="リンク短縮"
+            <Panel
+                title="Base64リンク化"
                 image={uploader}
                 link="/tools/linkshorter"
             >
-                <p>長いリンクを圧縮して短くします。</p>
-            </Panel> */}
+                <p>
+                    Base64をリンクにします。
+                    <br />
+                    ※リダイレクト時に確認が入ります。
+                </p>
+            </Panel>
         </Base>
     );
 }
