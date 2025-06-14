@@ -1,0 +1,36 @@
+.parent {
+    user-select: none;
+}
+
+.button {
+    background-color: var(--accent-color);
+    width: 100px;
+    height: 30px;
+
+    color: var(--border-color);
+
+    border-radius: 10px;
+
+    transition: all 0.2s ease;
+
+    margin-left: 10px;
+}
+
+.button:hover {
+    color: var(--text-color);
+    cursor: pointer;
+}
+
+.inputLink {
+    width: 50%;
+    height: 30px;
+    box-sizing: border-box;
+
+    border-bottom: 1px solid var(--border-color);
+
+    margin-bottom: 10px;
+}
+
+.output {
+    width: 80%;
+}
