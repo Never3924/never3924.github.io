@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>4x4LifeGame</title>
+
+        <script src="./index.js" type="module"></script>
+        <link rel="stylesheet" href="./index.css" />
+        <link rel="stylesheet" href="./lib/toast.css" />
+    </head>
+    <body>
+        <div id="container">
+            <div id="control">
+                <h1>4x4ライフゲーム</h1>
+                <canvas class="initBoard"></canvas>
+                <div class="buttons">
+                    <button class="clear">クリア</button
+                    ><button class="start">開始</button>
+                </div>
+                <div class="score">
+                    <p class="score">Score: <span></span></p>
+                    <p class="hiScore" hidden>HiScore: <span></span></p>
+                </div>
+            </div>
+
+            <canvas id="game" width="256" height="256"></canvas>
+        </div>
+
+        <div id="help">
+            <div class="icon">
+                <span>?</span>
+            </div>
+
+            <dialog class="body">
+                <div class="inner">
+                    <h1>ヘルプ</h1>
+                    <h2>ルール</h2>
+                    <ul>
+                        <li>
+                            ライフゲームの初期ボードを4x4サイズで好きなように書くことができる
+                        </li>
+                        <li>セルが誕生すればするほどスコアが増える</li>
+                        <li>目指せハイスコア</li>
+                    </ul>
+                    <h2>遊び方</h2>
+                    <ol>
+                        <li>左の小さいキャンバスに初期状態を書き込む</li>
+                        <li>開始ボタンをクリックする</li>
+                        <li>
+                            右のキャンバスでライフゲームが500世代分進行するので、見守る
+                        </li>
+                        <li>結果が左下に出るので、一喜一憂する</li>
+                    </ol>
+                    <h2>その他</h2>
+                    <ul>
+                        <li>
+                            ハイスコアをクリックするとハイスコアを取ったときの初期ボードで現在のボードが上書きされる
+                        </li>
+                        <li>
+                            このハイスコアとボードの情報はリロードしても保持される
+                        </li>
+                        <li>
+                            クリアボタンで初期ボードを全削除することができる
+                        </li>
+                    </ul>
+                </div>
+            </dialog>
+        </div>
+    </body>
+</html>
