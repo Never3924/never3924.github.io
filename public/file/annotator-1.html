@@ -36,9 +36,11 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .btn.danger{border-color:var(--danger);color:var(--danger)}
 .btn.danger:hover{background:#2a1515}
 .btn:disabled{opacity:.35;cursor:not-allowed;pointer-events:none}
+.btn.active-mode{background:var(--accent-d);border-color:var(--accent);color:var(--accent)}
 
 #layout{flex:1;display:flex;overflow:hidden;min-height:0}
 
+/* SIDEBAR */
 #sidebar{width:200px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
 .panel-hd{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:10px 12px 6px;flex-shrink:0}
 #img-list{flex:1;overflow-y:auto;padding:2px 0}
@@ -50,7 +52,6 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .img-item .thumb{width:30px;height:30px;object-fit:cover;border-radius:4px;flex-shrink:0;background:var(--border)}
 .img-item .iname{font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
 .img-item .ibadge{font-size:10px;background:var(--accent-d);color:var(--accent);border-radius:10px;padding:1px 6px;flex-shrink:0}
-
 #label-panel{border-top:1px solid var(--border);padding:8px 10px 10px;flex-shrink:0}
 #label-list{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;max-height:110px;overflow-y:auto}
 .lchip{display:inline-flex;align-items:center;gap:4px;padding:4px 9px;border-radius:99px;font-size:11px;cursor:pointer;border:1.5px solid transparent;user-select:none}
@@ -62,18 +63,32 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 #label-input:focus{border-color:var(--accent)}
 #label-add .btn{padding:0 10px;height:30px;font-size:16px}
 
+/* CANVAS AREA */
 #canvas-area{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
 #canvas-toolbar{height:44px;display:flex;align-items:center;gap:6px;padding:0 10px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;overflow-x:auto;scrollbar-width:none}
 #canvas-toolbar::-webkit-scrollbar{display:none}
+#zoom-info{font-size:11px;color:var(--muted);white-space:nowrap;min-width:44px;text-align:center}
+#mode-hint{font-size:11px;color:var(--muted);padding:0 4px;white-space:nowrap}
 #nav-wrap{display:flex;align-items:center;gap:6px;margin-left:auto;flex-shrink:0}
 #nav-info{font-size:12px;color:var(--muted);white-space:nowrap}
-#canvas-wrap{flex:1;overflow:auto;display:flex;align-items:center;justify-content:center;background:#080909;position:relative;touch-action:none}
-#canvas-wrap::-webkit-scrollbar{width:5px;height:5px}
-#canvas-wrap::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
-#main-canvas{display:block;touch-action:none;user-select:none}
-#empty-state{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--muted);font-size:13px;pointer-events:none}
+
+/* Canvas viewport: clips the transformed canvas */
+#canvas-viewport{flex:1;overflow:hidden;position:relative;background:#080909;}
+#canvas-wrap{
+  position:absolute;
+  top:0;left:0;
+  width:100%;height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transform-origin:0 0;
+  /* actual pan/zoom applied via transform in JS */
+}
+#main-canvas{display:block;touch-action:none;user-select:none;image-rendering:pixelated;}
+#empty-state{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--muted);font-size:13px;pointer-events:none;z-index:1}
 #empty-state svg{opacity:.25}
 
+/* ANN PANEL */
 #ann-panel{width:180px;flex-shrink:0;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
 #ann-list{flex:1;overflow-y:auto;padding:2px 0}
 #ann-list::-webkit-scrollbar{width:3px}
@@ -86,14 +101,13 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .ann-del{color:var(--muted);cursor:pointer;font-size:15px;line-height:1;padding:0 2px}
 .ann-del:hover{color:var(--danger)}
 
-/* mode indicator */
-#mode-hint{font-size:11px;color:var(--muted);padding:0 4px;white-space:nowrap}
-
+/* MOBILE TABS */
 #tab-bar{display:none;height:var(--tab-h);background:var(--surface);border-top:1px solid var(--border);flex-shrink:0}
 .tab-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10px;color:var(--muted);cursor:pointer;border:none;background:none;padding:6px 0;transition:color .15s;font-family:inherit}
 .tab-btn .ticon{font-size:20px;line-height:1}
 .tab-btn.active{color:var(--accent)}
 
+/* MOBILE PANEL */
 #mobile-panel{display:none;position:fixed;bottom:var(--tab-h);left:0;right:0;max-height:50svh;background:var(--surface);border-top:1px solid var(--border);z-index:50;flex-direction:column;overflow:hidden}
 #mobile-panel.open{display:flex}
 #mobile-panel-inner{flex:1;overflow-y:auto;overscroll-behavior:contain}
@@ -106,7 +120,6 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .m-ann-item{display:flex;align-items:center;gap:8px;padding:11px 14px;cursor:pointer;border-left:3px solid transparent;font-size:13px;transition:background .1s}
 .m-ann-item:hover{background:rgba(255,255,255,.04)}
 .m-ann-item.sel{background:rgba(91,156,246,.12);border-left-color:var(--accent)}
-
 #mobile-label-panel{border-top:1px solid var(--border);padding:10px 12px 12px;flex-shrink:0}
 #mobile-label-list{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px;max-height:90px;overflow-y:auto}
 .m-lchip{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:99px;font-size:13px;cursor:pointer;border:1.5px solid transparent;user-select:none}
@@ -118,16 +131,22 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 #mobile-label-input:focus{border-color:var(--accent)}
 #mobile-label-add .btn{height:40px;padding:0 14px}
 
+/* MODAL */
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:100;align-items:flex-end;justify-content:center}
 .modal-bg.open{display:flex}
 .modal{background:var(--surface);border:1px solid var(--border);border-radius:16px 16px 0 0;padding:20px 16px calc(20px + env(safe-area-inset-bottom,0px));width:100%;max-width:480px}
 .modal h2{font-size:15px;font-weight:600;margin-bottom:14px}
 #modal-label-list{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;max-height:200px;overflow-y:auto}
-.modal-lchip{padding:10px 16px;border-radius:99px;font-size:13px;cursor:pointer;border:1.5px solid transparent;user-select:none}
+.modal-lchip{padding:10px 16px;border-radius:99px;font-size:13px;cursor:pointer;user-select:none}
 .modal-lchip:active{opacity:.75}
 .modal-row{display:flex;gap:8px}
 .modal-row .btn{flex:1;justify-content:center;height:44px}
 
+/* PAN CURSOR */
+body.pan-mode #canvas-viewport { cursor: grab; }
+body.pan-mode.panning #canvas-viewport { cursor: grabbing; }
+
+/* TOAST */
 #toast{position:fixed;bottom:calc(var(--tab-h) + 16px);left:50%;transform:translateX(-50%) translateY(10px);background:var(--surface2);border:1px solid var(--border);color:var(--text);font-size:13px;padding:9px 20px;border-radius:99px;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:200;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
@@ -135,6 +154,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
   #sidebar,#ann-panel{display:none}
   #tab-bar{display:flex}
   #toast{bottom:calc(var(--tab-h) + 10px)}
+  #mode-hint{display:none}
 }
 @media(min-width:681px){
   #mobile-panel{display:none!important}
@@ -147,16 +167,10 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 <header id="topbar">
   <h1>✦ Annotator</h1>
   <div class="sep"></div>
-  <label class="btn">
-    📂 画像を開く
-    <input type="file" id="file-input" accept="image/jpeg,image/png" multiple hidden>
-  </label>
+  <label class="btn">📂 画像を開く<input type="file" id="file-input" accept="image/jpeg,image/png" multiple hidden></label>
   <div class="sep"></div>
   <button class="btn" id="save-btn" disabled>💾 セーブ</button>
-  <label class="btn">
-    📦 ロード
-    <input type="file" id="load-zip-input" accept=".zip" hidden>
-  </label>
+  <label class="btn">📦 ロード<input type="file" id="load-zip-input" accept=".zip" hidden></label>
   <div class="sep"></div>
   <button class="btn primary" id="export-btn" disabled>⬇ エクスポート</button>
 </header>
@@ -179,6 +193,11 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
     <div id="canvas-toolbar">
       <button class="btn danger" id="del-sel-btn" disabled>✕ 選択削除</button>
       <button class="btn danger" id="clear-btn" disabled>🗑 全削除</button>
+      <div class="sep"></div>
+      <button class="btn" id="zoom-out-btn" disabled title="縮小 (-)">－</button>
+      <span id="zoom-info">100%</span>
+      <button class="btn" id="zoom-in-btn"  disabled title="拡大 (+)">＋</button>
+      <button class="btn" id="zoom-fit-btn" disabled title="フィット">⊡</button>
       <span id="mode-hint"></span>
       <div id="nav-wrap">
         <button class="btn" id="prev-btn" disabled style="padding:0 12px">‹</button>
@@ -186,15 +205,16 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
         <button class="btn" id="next-btn" disabled style="padding:0 12px">›</button>
       </div>
     </div>
-    <div id="canvas-wrap">
+    <div id="canvas-viewport">
       <div id="empty-state">
         <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
-          <rect x="3" y="3" width="18" height="18" rx="2"/>
-          <path d="M3 9h18M9 21V9"/>
+          <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>
         </svg>
         画像を開いてアノテーションを開始
       </div>
-      <canvas id="main-canvas"></canvas>
+      <div id="canvas-wrap">
+        <canvas id="main-canvas"></canvas>
+      </div>
     </div>
   </div>
 
@@ -235,43 +255,61 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 <div id="toast"></div>
 
 <script>
-// ============================================================
+// ─────────────────────────────────────────────
 // CONSTANTS
-// ============================================================
+// ─────────────────────────────────────────────
 const COLORS=['#5b9cf6','#e05c5c','#56c478','#f0a050','#c46ee0','#50d0d0','#f0e050','#e07890','#78a0e0','#78e0a0'];
+const HANDLE_R   = 7;
+const HANDLE_HIT = 14;
+const ZOOM_MIN   = 0.1;
+const ZOOM_MAX   = 20;
+const ZOOM_STEP  = 0.15; // wheel step (multiplicative)
 
-// Handle hit radius (canvas px) — bigger on touch
-const HANDLE_R   = 7;   // visual half-size
-const HANDLE_HIT = 14;  // hit test half-size (finger-friendly)
-
-// Handle positions (index → meaning)
-// 0=TL 1=TC 2=TR 3=ML 4=MR 5=BL 6=BC 7=BR
-const HANDLE_CURSORS = ['nw-resize','n-resize','ne-resize','w-resize','e-resize','sw-resize','s-resize','se-resize'];
-
-// ============================================================
+// ─────────────────────────────────────────────
 // STATE
-// ============================================================
+// ─────────────────────────────────────────────
 let images=[],annots={},labels=[],curIdx=-1,selAnn=-1,selectedLabel=null;
 
-// interaction state machine
-// mode: 'idle' | 'draw' | 'move' | 'resize'
-let mode      = 'idle';
+// viewport transform  (canvas-wrap position & zoom)
+let vpZoom  = 1;   // current zoom (1 = natural pixel size)
+let vpX     = 0;   // pan offset in viewport px
+let vpY     = 0;
+let fitZoom = 1;   // zoom that fits the image
+
+// interaction
+let iMode     = 'idle'; // 'idle'|'draw'|'move'|'resize'|'pan'
 let startPt   = null;   // image coords at pointer-down
-let origRect  = null;   // rect snapshot before drag
-let handleIdx = -1;     // which handle is being dragged
-let tempRect  = null;   // preview rect while drawing
+let origRect  = null;
+let handleIdx = -1;
+let tempRect  = null;
 let pendingRect = null;
 
-const canvas  = document.getElementById('main-canvas');
-const ctx     = canvas.getContext('2d');
-let imgObj    = null;
-let scale     = 1;
+// pan
+let panStart  = null;   // viewport px at pan-start
+let vpXStart  = 0;
+let vpYStart  = 0;
+
+// touch / pinch
+let touches      = [];
+let pinchDist0   = 0;
+let pinchZoom0   = 1;
+let pinchCentre  = null;
+let isPinching   = false;
+
+// keyboard
+let spaceDown = false;
+
+const canvas   = document.getElementById('main-canvas');
+const ctx      = canvas.getContext('2d');
+const viewport = document.getElementById('canvas-viewport');
+const wrap     = document.getElementById('canvas-wrap');
+let imgObj     = null;
 let currentTab = 'images';
 
-// ============================================================
+// ─────────────────────────────────────────────
 // UTILS
-// ============================================================
-const $  = id => document.getElementById(id);
+// ─────────────────────────────────────────────
+const $=id=>document.getElementById(id);
 function toast(msg,dur=2200){const el=$('toast');el.textContent=msg;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),dur)}
 function colorFor(lid){return(lid!=null&&labels[lid])?labels[lid].color:'#888'}
 function cropName(n,i){return n.replace(/\.[^.]+$/,'')+'_crop_'+String(i+1).padStart(2,'0')+'.png'}
@@ -280,198 +318,433 @@ function readAsDataURL(f){return new Promise((r,e)=>{const rd=new FileReader();r
 function readAsArrayBuffer(f){return new Promise((r,e)=>{const rd=new FileReader();rd.onload=()=>r(rd.result);rd.onerror=e;rd.readAsArrayBuffer(f)})}
 function loadImg(src){return new Promise((r,e)=>{const i=new Image();i.onload=()=>r(i);i.onerror=e;i.src=src})}
 function isMobile(){return window.innerWidth<=680}
+function dist2(a,b){return Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY)}
+function mid2(a,b){return{x:(a.clientX+b.clientX)/2,y:(a.clientY+b.clientY)/2}}
 
-// coord conversion
-function getPos(e){
-  const r=canvas.getBoundingClientRect();
-  const cx=e.touches?e.touches[0].clientX:e.clientX;
-  const cy=e.touches?e.touches[0].clientY:e.clientY;
-  return{x:cx-r.left,y:cy-r.top};
+// ─────────────────────────────────────────────
+// VIEWPORT TRANSFORM
+// ─────────────────────────────────────────────
+function applyTransform(){
+  wrap.style.transform=`translate(${vpX}px,${vpY}px) scale(${vpZoom})`;
+  wrap.style.transformOrigin='0 0';
+  $('zoom-info').textContent=Math.round(vpZoom/fitZoom*100)+'%';
 }
-function c2i(cx,cy){return{x:cx/scale,y:cy/scale}}
-function i2c(ix,iy){return{x:ix*scale,y:iy*scale}}
 
-// clamp image coord
-function clampI(v){return Math.max(0,Math.min(imgObj?imgObj.naturalWidth:99999,v))}
-function clampJ(v){return Math.max(0,Math.min(imgObj?imgObj.naturalHeight:99999,v))}
+function clampPan(){
+  if(!imgObj) return;
+  const vw=viewport.clientWidth, vh=viewport.clientHeight;
+  const iw=imgObj.naturalWidth*vpZoom, ih=imgObj.naturalHeight*vpZoom;
+  // allow some margin (half viewport) so image doesn't disappear
+  const mx=vw*0.5, my=vh*0.5;
+  vpX=Math.min(mx, Math.max(vpX, vw-iw-mx));
+  vpY=Math.min(my, Math.max(vpY, vh-ih-my));
+}
 
-// ============================================================
-// HANDLES  (8 handles in canvas coords)
-// ============================================================
+/** Zoom centred on viewport point (vx,vy) */
+function zoomAt(vx,vy,newZoom){
+  newZoom=Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, newZoom));
+  const ratio=newZoom/vpZoom;
+  vpX=vx-(vx-vpX)*ratio;
+  vpY=vy-(vy-vpY)*ratio;
+  vpZoom=newZoom;
+  clampPan();
+  applyTransform();
+}
+
+function fitToViewport(){
+  if(!imgObj) return;
+  const vw=viewport.clientWidth, vh=viewport.clientHeight;
+  fitZoom=Math.min(vw/imgObj.naturalWidth, vh/imgObj.naturalHeight, 1);
+  vpZoom=fitZoom;
+  vpX=(vw-imgObj.naturalWidth*vpZoom)/2;
+  vpY=(vh-imgObj.naturalHeight*vpZoom)/2;
+  applyTransform();
+}
+
+// Convert viewport-relative px → image px
+function vpToImg(vx,vy){
+  return{x:(vx-vpX)/vpZoom, y:(vy-vpY)/vpZoom};
+}
+
+// ─────────────────────────────────────────────
+// HANDLE LOGIC  (image coords, drawn at vpZoom scale)
+// ─────────────────────────────────────────────
 function getHandles(rect){
-  const p1=i2c(rect.top_x,   rect.top_y);
-  const p2=i2c(rect.bottom_x,rect.bottom_y);
-  const mx=(p1.x+p2.x)/2, my=(p1.y+p2.y)/2;
+  const mx=(rect.top_x+rect.bottom_x)/2, my=(rect.top_y+rect.bottom_y)/2;
   return[
-    {x:p1.x,y:p1.y}, {x:mx,  y:p1.y}, {x:p2.x,y:p1.y},
-    {x:p1.x,y:my  },                   {x:p2.x,y:my  },
-    {x:p1.x,y:p2.y}, {x:mx,  y:p2.y}, {x:p2.x,y:p2.y},
+    {x:rect.top_x,y:rect.top_y},   {x:mx,y:rect.top_y},    {x:rect.bottom_x,y:rect.top_y},
+    {x:rect.top_x,y:my},                                     {x:rect.bottom_x,y:my},
+    {x:rect.top_x,y:rect.bottom_y},{x:mx,y:rect.bottom_y},  {x:rect.bottom_x,y:rect.bottom_y},
   ];
 }
+const HANDLE_CURSORS=['nw-resize','n-resize','ne-resize','w-resize','e-resize','sw-resize','s-resize','se-resize'];
 
-function hitHandle(pos, rect){
+// Hit test in image coords, accounting for zoom
+function hitHandle(imgPt, rect){
+  const hitR=HANDLE_HIT/vpZoom; // hit radius in image coords
   const handles=getHandles(rect);
   for(let i=0;i<handles.length;i++){
-    const h=handles[i];
-    if(Math.abs(pos.x-h.x)<=HANDLE_HIT && Math.abs(pos.y-h.y)<=HANDLE_HIT) return i;
+    if(Math.abs(imgPt.x-handles[i].x)<=hitR && Math.abs(imgPt.y-handles[i].y)<=hitR) return i;
   }
   return -1;
 }
-
-function hitRect(pos, rect){
-  const p1=i2c(rect.top_x,rect.top_y), p2=i2c(rect.bottom_x,rect.bottom_y);
-  return pos.x>=p1.x && pos.x<=p2.x && pos.y>=p1.y && pos.y<=p2.y;
+function hitRect(imgPt, rect){
+  return imgPt.x>=rect.top_x && imgPt.x<=rect.bottom_x && imgPt.y>=rect.top_y && imgPt.y<=rect.bottom_y;
 }
+function clampI(v){return Math.max(0,Math.min(imgObj?imgObj.naturalWidth:1e9,Math.round(v)))}
+function clampJ(v){return Math.max(0,Math.min(imgObj?imgObj.naturalHeight:1e9,Math.round(v)))}
 
-// Apply resize: move one handle in image coords
-function applyResize(rect, hIdx, dxi, dyi){
-  let {top_x:tx,top_y:ty,bottom_x:bx,bottom_y:by}=rect;
-  // hIdx: 0=TL 1=TC 2=TR 3=ML 4=MR 5=BL 6=BC 7=BR
-  const movesLeft  =[0,3,5].includes(hIdx);
-  const movesRight =[2,4,7].includes(hIdx);
-  const movesTop   =[0,1,2].includes(hIdx);
-  const movesBottom=[5,6,7].includes(hIdx);
-  if(movesLeft)   tx=clampI(Math.round(tx+dxi));
-  if(movesRight)  bx=clampI(Math.round(bx+dxi));
-  if(movesTop)    ty=clampJ(Math.round(ty+dyi));
-  if(movesBottom) by=clampJ(Math.round(by+dyi));
-  // prevent inversion
+function applyResize(rect,hIdx,dxi,dyi){
+  let{top_x:tx,top_y:ty,bottom_x:bx,bottom_y:by}=rect;
+  if([0,3,5].includes(hIdx)) tx=clampI(tx+dxi);
+  if([2,4,7].includes(hIdx)) bx=clampI(bx+dxi);
+  if([0,1,2].includes(hIdx)) ty=clampJ(ty+dyi);
+  if([5,6,7].includes(hIdx)) by=clampJ(by+dyi);
   if(tx>bx){const t=tx;tx=bx;bx=t;}
   if(ty>by){const t=ty;ty=by;by=t;}
   return{top_x:tx,top_y:ty,bottom_x:bx,bottom_y:by};
 }
-
-// Apply move in image coords
-function applyMove(rect, dxi, dyi){
-  const w=rect.bottom_x-rect.top_x, h=rect.bottom_y-rect.top_y;
-  const iw=imgObj?imgObj.naturalWidth:99999, ih=imgObj?imgObj.naturalHeight:99999;
+function applyMove(rect,dxi,dyi){
+  const w=rect.bottom_x-rect.top_x,h=rect.bottom_y-rect.top_y;
+  const iw=imgObj?imgObj.naturalWidth:1e9, ih=imgObj?imgObj.naturalHeight:1e9;
   let tx=Math.round(rect.top_x+dxi), ty=Math.round(rect.top_y+dyi);
-  tx=Math.max(0,Math.min(iw-w,tx));
-  ty=Math.max(0,Math.min(ih-h,ty));
+  tx=Math.max(0,Math.min(iw-w,tx)); ty=Math.max(0,Math.min(ih-h,ty));
   return{top_x:tx,top_y:ty,bottom_x:tx+w,bottom_y:ty+h};
 }
 
-// ============================================================
+// ─────────────────────────────────────────────
+// RENDER
+// ─────────────────────────────────────────────
+function redraw(){
+  if(!imgObj) return;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.drawImage(imgObj,0,0);
+  const anns=annots[images[curIdx].name]||[];
+  anns.forEach((a,i)=>drawRect(a.rect,colorFor(a.label_id),i===selAnn));
+  if(tempRect) drawRect(tempRect,'#ffffff',false,true);
+}
+
+function drawRect(rect,color,selected,dashed=false){
+  const tx=rect.top_x,ty=rect.top_y,bx=rect.bottom_x,by=rect.bottom_y;
+  const w=bx-tx,h=by-ty;
+
+  // Scale handle size inversely with zoom so they stay visually constant
+  const hr=HANDLE_R/vpZoom;
+  const lw=(selected?2.5:1.5)/vpZoom;
+
+  ctx.save();
+  ctx.lineWidth=lw;
+  if(dashed) ctx.setLineDash([6/vpZoom,3/vpZoom]);
+  ctx.strokeStyle=color;
+  ctx.strokeRect(tx,ty,w,h);
+  ctx.fillStyle=color+(selected?'28':'18');
+  ctx.fillRect(tx,ty,w,h);
+
+  if(selected){
+    getHandles(rect).forEach(h=>{
+      ctx.setLineDash([]);
+      ctx.fillStyle='#fff';
+      ctx.fillRect(h.x-hr,h.y-hr,hr*2,hr*2);
+      ctx.strokeStyle=color;
+      ctx.lineWidth=1.5/vpZoom;
+      ctx.strokeRect(h.x-hr,h.y-hr,hr*2,hr*2);
+    });
+  }
+  ctx.restore();
+}
+
+// ─────────────────────────────────────────────
+// GET VIEWPORT-RELATIVE POSITION
+// ─────────────────────────────────────────────
+function getVpPos(e){
+  const r=viewport.getBoundingClientRect();
+  const src=e.touches?e.touches[0]:e;
+  return{x:src.clientX-r.left, y:src.clientY-r.top};
+}
+
+// ─────────────────────────────────────────────
 // CURSOR
-// ============================================================
-function updateCursor(pos){
+// ─────────────────────────────────────────────
+function updateCursor(imgPt){
   if(!imgObj||curIdx<0){canvas.style.cursor='default';return}
+  if(spaceDown){$('mode-hint').textContent='スペース: パン';return}
   if(selAnn>=0){
     const rect=(annots[images[curIdx].name]||[])[selAnn];
     if(rect){
-      const hi=hitHandle(pos,rect);
+      const hi=hitHandle(imgPt,rect);
       if(hi>=0){canvas.style.cursor=HANDLE_CURSORS[hi];$('mode-hint').textContent='ハンドル: リサイズ';return}
-      if(hitRect(pos,rect)){canvas.style.cursor='move';$('mode-hint').textContent='内側: 移動';return}
+      if(hitRect(imgPt,rect)){canvas.style.cursor='move';$('mode-hint').textContent='内側: 移動';return}
     }
   }
   canvas.style.cursor='crosshair';
-  $('mode-hint').textContent=selAnn>=0?'外側: 新規 / クリック: 選択':'ドラッグで新規作成';
+  $('mode-hint').textContent='ドラッグ: 描画';
 }
 
-// ============================================================
-// POINTER EVENTS
-// ============================================================
-canvas.addEventListener('mousedown',  onDown);
-canvas.addEventListener('mousemove',  onMove);
-canvas.addEventListener('mouseup',    onUp);
-canvas.addEventListener('mousemove',  e=>{ if(mode==='idle') updateCursor(getPos(e)); }, {passive:true});
-canvas.addEventListener('touchstart', onDown, {passive:false});
-canvas.addEventListener('touchmove',  onMove, {passive:false});
-canvas.addEventListener('touchend',   onUp,   {passive:false});
+// ─────────────────────────────────────────────
+// POINTER EVENTS (mouse)
+// ─────────────────────────────────────────────
+viewport.addEventListener('mousedown', onMouseDown);
+viewport.addEventListener('mousemove', onMouseMove);
+viewport.addEventListener('mouseup',   onMouseUp);
+viewport.addEventListener('wheel',     onWheel, {passive:false});
 
-function onDown(e){
+function onMouseDown(e){
+  if(e.button!==0) return;
   e.preventDefault();
   if(!imgObj) return;
-  const pos=getPos(e);
+
+  const vp=getVpPos(e);
+  const ip=vpToImg(vp.x,vp.y);
+
+  // Pan mode (space)
+  if(spaceDown){
+    iMode='pan';
+    panStart={x:e.clientX,y:e.clientY};
+    vpXStart=vpX; vpYStart=vpY;
+    document.body.classList.add('panning');
+    return;
+  }
+
   const anns=annots[images[curIdx].name]||[];
 
-  // 1) handle hit on selected rect?
+  // Handle hit on selected rect
   if(selAnn>=0 && selAnn<anns.length){
-    const hi=hitHandle(pos, anns[selAnn].rect);
-    if(hi>=0){
-      mode='resize'; handleIdx=hi;
-      startPt=c2i(pos.x,pos.y);
-      origRect={...anns[selAnn].rect};
-      return;
-    }
-    // 2) inside selected rect → move
-    if(hitRect(pos, anns[selAnn].rect)){
-      mode='move';
-      startPt=c2i(pos.x,pos.y);
-      origRect={...anns[selAnn].rect};
-      return;
-    }
+    const hi=hitHandle(ip, anns[selAnn].rect);
+    if(hi>=0){iMode='resize';handleIdx=hi;startPt=ip;origRect={...anns[selAnn].rect};return}
+    if(hitRect(ip, anns[selAnn].rect)){iMode='move';startPt=ip;origRect={...anns[selAnn].rect};return}
   }
 
-  // 3) click another rect to select
+  // Click other rect
   for(let i=anns.length-1;i>=0;i--){
-    if(hitRect(pos,anns[i].rect)){
-      selAnn=i; $('del-sel-btn').disabled=false;
-      redraw(); renderAnnList(); updateCursor(pos); return;
-    }
+    if(hitRect(ip,anns[i].rect)){selAnn=i;$('del-sel-btn').disabled=false;redraw();renderAnnList();updateCursor(ip);return}
   }
 
-  // 4) empty area → start drawing
-  selAnn=-1; $('del-sel-btn').disabled=true;
-  mode='draw';
-  startPt=c2i(pos.x,pos.y);
-  tempRect=null;
+  // Draw
+  selAnn=-1;$('del-sel-btn').disabled=true;
+  iMode='draw'; startPt=ip; tempRect=null;
 }
 
-function onMove(e){
+function onMouseMove(e){
+  const vp=getVpPos(e);
+  const ip=vpToImg(vp.x,vp.y);
+
+  if(iMode==='idle'){ updateCursor(ip); return; }
   e.preventDefault();
-  if(mode==='idle') return;
-  const pos=getPos(e);
-  const cur=c2i(pos.x,pos.y);
+
+  if(iMode==='pan'){
+    vpX=vpXStart+(e.clientX-panStart.x);
+    vpY=vpYStart+(e.clientY-panStart.y);
+    clampPan(); applyTransform(); return;
+  }
+
   const anns=annots[images[curIdx].name]||[];
 
-  if(mode==='draw'){
+  if(iMode==='draw'){
     tempRect={
-      top_x:   Math.round(Math.min(startPt.x,cur.x)),
-      top_y:   Math.round(Math.min(startPt.y,cur.y)),
-      bottom_x:Math.round(Math.max(startPt.x,cur.x)),
-      bottom_y:Math.round(Math.max(startPt.y,cur.y)),
+      top_x:   clampI(Math.min(startPt.x,ip.x)),
+      top_y:   clampJ(Math.min(startPt.y,ip.y)),
+      bottom_x:clampI(Math.max(startPt.x,ip.x)),
+      bottom_y:clampJ(Math.max(startPt.y,ip.y)),
     };
     redraw(); return;
   }
-
-  if(mode==='resize' && selAnn>=0 && selAnn<anns.length){
-    const dxi=cur.x-startPt.x, dyi=cur.y-startPt.y;
-    anns[selAnn].rect=applyResize(origRect, handleIdx, dxi, dyi);
+  if(iMode==='resize' && selAnn>=0){
+    anns[selAnn].rect=applyResize(origRect,handleIdx,ip.x-startPt.x,ip.y-startPt.y);
     redraw(); return;
   }
-
-  if(mode==='move' && selAnn>=0 && selAnn<anns.length){
-    const dxi=cur.x-startPt.x, dyi=cur.y-startPt.y;
-    anns[selAnn].rect=applyMove(origRect, dxi, dyi);
+  if(iMode==='move' && selAnn>=0){
+    anns[selAnn].rect=applyMove(origRect,ip.x-startPt.x,ip.y-startPt.y);
     redraw(); return;
   }
 }
 
-function onUp(e){
-  e.preventDefault();
-  const prevMode=mode;
-  mode='idle';
+function onMouseUp(e){
+  document.body.classList.remove('panning');
+  const prev=iMode; iMode='idle';
+  if(prev==='pan') return;
 
-  if(prevMode==='draw'){
-    if(!tempRect||tempRect.bottom_x-tempRect.top_x<5||tempRect.bottom_y-tempRect.top_y<5){
-      tempRect=null; redraw(); return;
-    }
+  if(prev==='draw'){
+    if(!tempRect||tempRect.bottom_x-tempRect.top_x<3||tempRect.bottom_y-tempRect.top_y<3){tempRect=null;redraw();return}
     pendingRect=tempRect; tempRect=null;
-    if(labels.length>0) openLabelModal();
-    else commitRect(null);
+    if(labels.length>0) openLabelModal(); else commitRect(null);
     return;
   }
-
-  if(prevMode==='resize'||prevMode==='move'){
-    // commit: rebuild crop filenames
+  if(prev==='resize'||prev==='move'){
     const name=images[curIdx].name;
     (annots[name]||[]).forEach((a,j)=>a.image=cropName(name,j));
-    renderAnnList();
-    return;
+    renderAnnList(); return;
   }
 }
 
+function onWheel(e){
+  e.preventDefault();
+  const vp=getVpPos(e);
+  const delta=e.deltaY<0 ? (1+ZOOM_STEP) : 1/(1+ZOOM_STEP);
+  zoomAt(vp.x, vp.y, vpZoom*delta);
+}
+
+// ─────────────────────────────────────────────
+// TOUCH EVENTS
+// ─────────────────────────────────────────────
+viewport.addEventListener('touchstart', onTouchStart, {passive:false});
+viewport.addEventListener('touchmove',  onTouchMove,  {passive:false});
+viewport.addEventListener('touchend',   onTouchEnd,   {passive:false});
+viewport.addEventListener('touchcancel',onTouchEnd,   {passive:false});
+
+function onTouchStart(e){
+  e.preventDefault();
+  if(!imgObj) return;
+
+  touches=Array.from(e.touches);
+
+  if(touches.length===2){
+    // Pinch / 2-finger pan
+    isPinching=true; iMode='pan';
+    pinchDist0=dist2(touches[0],touches[1]);
+    pinchZoom0=vpZoom;
+    pinchCentre=mid2(touches[0],touches[1]);
+    const r=viewport.getBoundingClientRect();
+    panStart={x:pinchCentre.x-r.left, y:pinchCentre.y-r.top};
+    vpXStart=vpX; vpYStart=vpY;
+    return;
+  }
+
+  isPinching=false;
+
+  // Single touch → same as mousedown logic
+  const vp=getVpPos(e);
+  const ip=vpToImg(vp.x,vp.y);
+  const anns=annots[images[curIdx].name]||[];
+
+  if(selAnn>=0 && selAnn<anns.length){
+    const hi=hitHandle(ip,anns[selAnn].rect);
+    if(hi>=0){iMode='resize';handleIdx=hi;startPt=ip;origRect={...anns[selAnn].rect};return}
+    if(hitRect(ip,anns[selAnn].rect)){iMode='move';startPt=ip;origRect={...anns[selAnn].rect};return}
+  }
+  for(let i=anns.length-1;i>=0;i--){
+    if(hitRect(ip,anns[i].rect)){selAnn=i;$('del-sel-btn').disabled=false;redraw();renderAnnList();return}
+  }
+  selAnn=-1;$('del-sel-btn').disabled=true;
+  iMode='draw'; startPt=ip; tempRect=null;
+}
+
+function onTouchMove(e){
+  e.preventDefault();
+  if(!imgObj) return;
+  touches=Array.from(e.touches);
+
+  if(touches.length===2){
+    isPinching=true;
+    const newDist=dist2(touches[0],touches[1]);
+    const newMid=mid2(touches[0],touches[1]);
+    const r=viewport.getBoundingClientRect();
+    const cx=newMid.x-r.left, cy=newMid.y-r.top;
+
+    // zoom centred on pinch midpoint
+    const newZoom=Math.max(ZOOM_MIN,Math.min(ZOOM_MAX,pinchZoom0*(newDist/pinchDist0)));
+    const ratio=newZoom/vpZoom;
+    vpX=cx-(cx-vpX)*ratio;
+    vpY=cy-(cy-vpY)*ratio;
+    vpZoom=newZoom;
+
+    // 2-finger pan delta
+    vpX+=(cx-(panStart.x));
+    vpY+=(cy-(panStart.y));
+    panStart={x:cx,y:cy};
+
+    clampPan(); applyTransform(); return;
+  }
+
+  if(isPinching) return; // finger lifted to 1 but was pinching
+
+  const vp=getVpPos(e);
+  const ip=vpToImg(vp.x,vp.y);
+  const anns=annots[images[curIdx].name]||[];
+
+  if(iMode==='draw'){
+    tempRect={
+      top_x:   clampI(Math.min(startPt.x,ip.x)),
+      top_y:   clampJ(Math.min(startPt.y,ip.y)),
+      bottom_x:clampI(Math.max(startPt.x,ip.x)),
+      bottom_y:clampJ(Math.max(startPt.y,ip.y)),
+    };
+    redraw(); return;
+  }
+  if(iMode==='resize' && selAnn>=0){
+    anns[selAnn].rect=applyResize(origRect,handleIdx,ip.x-startPt.x,ip.y-startPt.y);
+    redraw(); return;
+  }
+  if(iMode==='move' && selAnn>=0){
+    anns[selAnn].rect=applyMove(origRect,ip.x-startPt.x,ip.y-startPt.y);
+    redraw(); return;
+  }
+}
+
+function onTouchEnd(e){
+  touches=Array.from(e.touches);
+  if(touches.length<2) isPinching=false;
+  if(touches.length>0) return; // still fingers down
+
+  const prev=iMode; iMode='idle';
+  if(isPinching){isPinching=false;return}
+
+  if(prev==='draw'){
+    if(!tempRect||tempRect.bottom_x-tempRect.top_x<3||tempRect.bottom_y-tempRect.top_y<3){tempRect=null;redraw();return}
+    pendingRect=tempRect; tempRect=null;
+    if(labels.length>0) openLabelModal(); else commitRect(null);
+    return;
+  }
+  if(prev==='resize'||prev==='move'){
+    const name=images[curIdx].name;
+    (annots[name]||[]).forEach((a,j)=>a.image=cropName(name,j));
+    renderAnnList(); return;
+  }
+}
+
+// ─────────────────────────────────────────────
+// KEYBOARD
+// ─────────────────────────────────────────────
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT') return;
+  if(e.key===' '&&!spaceDown){
+    spaceDown=true;
+    document.body.classList.add('pan-mode');
+    $('mode-hint').textContent='スペース: パン';
+    e.preventDefault(); return;
+  }
+  if(e.key==='ArrowLeft')  selectImage(curIdx-1);
+  if(e.key==='ArrowRight') selectImage(curIdx+1);
+  if((e.key==='Delete'||e.key==='Backspace')&&selAnn>=0) deleteAnn(selAnn);
+  if(e.key==='Escape'){selAnn=-1;iMode='idle';redraw();renderAnnList();$('mode-hint').textContent=''}
+  if(e.key==='+'||e.key==='='){const vw=viewport.clientWidth/2,vh=viewport.clientHeight/2;zoomAt(vw,vh,vpZoom*(1+ZOOM_STEP))}
+  if(e.key==='-'){const vw=viewport.clientWidth/2,vh=viewport.clientHeight/2;zoomAt(vw,vh,vpZoom/(1+ZOOM_STEP))}
+  if(e.key==='0') fitToViewport();
+});
+document.addEventListener('keyup',e=>{
+  if(e.key===' '){
+    spaceDown=false;
+    document.body.classList.remove('pan-mode');
+    iMode='idle';
+    $('mode-hint').textContent='';
+  }
+});
+
+// ─────────────────────────────────────────────
+// ZOOM BUTTONS
+// ─────────────────────────────────────────────
+$('zoom-in-btn').addEventListener('click',()=>{
+  const vw=viewport.clientWidth/2,vh=viewport.clientHeight/2;
+  zoomAt(vw,vh,vpZoom*(1+ZOOM_STEP*2));
+});
+$('zoom-out-btn').addEventListener('click',()=>{
+  const vw=viewport.clientWidth/2,vh=viewport.clientHeight/2;
+  zoomAt(vw,vh,vpZoom/(1+ZOOM_STEP*2));
+});
+$('zoom-fit-btn').addEventListener('click',()=>fitToViewport());
+
+// ─────────────────────────────────────────────
+// COMMIT RECT
+// ─────────────────────────────────────────────
 function commitRect(lid){
   if(!pendingRect) return;
   const name=images[curIdx].name;
@@ -484,65 +757,16 @@ function commitRect(lid){
   $('save-btn').disabled=false; $('export-btn').disabled=false;
 }
 
-// ============================================================
-// RENDER
-// ============================================================
-function redraw(){
-  if(!imgObj) return;
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.drawImage(imgObj,0,0,canvas.width,canvas.height);
-  const anns=annots[images[curIdx].name]||[];
-  anns.forEach((a,i)=>drawRect(a.rect, colorFor(a.label_id), i===selAnn));
-  if(tempRect) drawRect(tempRect,'#ffffff',false,true);
-}
-
-function drawRect(rect, color, selected, dashed=false){
-  const p1=i2c(rect.top_x,rect.top_y), p2=i2c(rect.bottom_x,rect.bottom_y);
-  const w=p2.x-p1.x, h=p2.y-p1.y;
-  ctx.save();
-  if(dashed) ctx.setLineDash([5,3]);
-  ctx.strokeStyle=color; ctx.lineWidth=selected?2.5:1.5;
-  ctx.strokeRect(p1.x,p1.y,w,h);
-  ctx.fillStyle=color+(selected?'28':'18');
-  ctx.fillRect(p1.x,p1.y,w,h);
-
-  if(selected){
-    // draw 8 handles
-    const handles=getHandles(rect);
-    handles.forEach(h=>{
-      ctx.fillStyle='#fff';
-      ctx.fillRect(h.x-HANDLE_R,h.y-HANDLE_R,HANDLE_R*2,HANDLE_R*2);
-      ctx.strokeStyle=color; ctx.lineWidth=1.5;
-      ctx.setLineDash([]);
-      ctx.strokeRect(h.x-HANDLE_R,h.y-HANDLE_R,HANDLE_R*2,HANDLE_R*2);
-    });
-  }
-  ctx.restore();
-}
-
-// ============================================================
-// CANVAS FIT
-// ============================================================
-function fitCanvas(){
-  if(!imgObj) return;
-  const wrap=$('canvas-wrap');
-  const ww=wrap.clientWidth-8, wh=wrap.clientHeight-8;
-  scale=Math.min(ww/imgObj.naturalWidth, wh/imgObj.naturalHeight, 1);
-  canvas.width =Math.round(imgObj.naturalWidth *scale);
-  canvas.height=Math.round(imgObj.naturalHeight*scale);
-}
-
-// ============================================================
+// ─────────────────────────────────────────────
 // LABELS
-// ============================================================
+// ─────────────────────────────────────────────
 function renderLabels(){renderPcLabels();renderMobileLabels();renderModalLabels()}
-
 function renderPcLabels(){
-  const el=$('label-list'); el.innerHTML='';
+  const el=$('label-list');el.innerHTML='';
   labels.forEach((lbl,i)=>{
     const c=document.createElement('div');
     c.className='lchip'+(selectedLabel===i?' sel':'');
-    c.style.background=lbl.color+'30'; c.style.color=lbl.color;
+    c.style.background=lbl.color+'30';c.style.color=lbl.color;
     c.style.borderColor=selectedLabel===i?lbl.color:'transparent';
     c.innerHTML=`<span>${lbl.name}</span><span class="lx">✕</span>`;
     c.addEventListener('click',e=>{if(e.target.classList.contains('lx')){deleteLabel(i);return}selectedLabel=(selectedLabel===i)?null:i;renderLabels()});
@@ -550,11 +774,11 @@ function renderPcLabels(){
   });
 }
 function renderMobileLabels(){
-  const el=$('mobile-label-list'); el.innerHTML='';
+  const el=$('mobile-label-list');el.innerHTML='';
   labels.forEach((lbl,i)=>{
     const c=document.createElement('div');
     c.className='m-lchip'+(selectedLabel===i?' sel':'');
-    c.style.background=lbl.color+'30'; c.style.color=lbl.color;
+    c.style.background=lbl.color+'30';c.style.color=lbl.color;
     c.style.borderColor=selectedLabel===i?lbl.color:'transparent';
     c.innerHTML=`<span>${lbl.name}</span><span class="lx">✕</span>`;
     c.addEventListener('click',e=>{if(e.target.classList.contains('lx')){deleteLabel(i);return}selectedLabel=(selectedLabel===i)?null:i;renderLabels()});
@@ -562,41 +786,39 @@ function renderMobileLabels(){
   });
 }
 function renderModalLabels(){
-  const el=$('modal-label-list'); el.innerHTML='';
+  const el=$('modal-label-list');el.innerHTML='';
   labels.forEach((lbl,i)=>{
     const c=document.createElement('div');
     c.className='modal-lchip';
-    c.style.background=lbl.color+'30'; c.style.color=lbl.color;
+    c.style.background=lbl.color+'30';c.style.color=lbl.color;
     c.textContent=lbl.name;
     c.addEventListener('click',()=>{$('label-modal').classList.remove('open');commitRect(i)});
     el.appendChild(c);
   });
 }
 function addLabel(inputId){
-  const inp=$(inputId), name=inp.value.trim();
-  if(!name) return;
+  const inp=$(inputId),name=inp.value.trim();
+  if(!name)return;
   if(labels.find(l=>l.name===name)){toast('同名ラベルが既にあります');return}
   labels.push({name,color:COLORS[labels.length%COLORS.length]});
-  inp.value=''; renderLabels();
+  inp.value='';renderLabels();
 }
 function deleteLabel(idx){
   labels.splice(idx,1);
   Object.values(annots).forEach(arr=>arr.forEach(a=>{
-    if(a.label_id===idx)a.label_id=null;
-    else if(a.label_id>idx)a.label_id--;
+    if(a.label_id===idx)a.label_id=null;else if(a.label_id>idx)a.label_id--;
   }));
-  if(selectedLabel===idx)selectedLabel=null;
-  else if(selectedLabel>idx)selectedLabel--;
-  renderLabels(); redraw(); renderAnnList();
+  if(selectedLabel===idx)selectedLabel=null;else if(selectedLabel>idx)selectedLabel--;
+  renderLabels();redraw();renderAnnList();
 }
 $('add-label-btn').addEventListener('click',()=>addLabel('label-input'));
 $('label-input').addEventListener('keydown',e=>{if(e.key==='Enter')addLabel('label-input')});
 $('mobile-add-label-btn').addEventListener('click',()=>addLabel('mobile-label-input'));
 $('mobile-label-input').addEventListener('keydown',e=>{if(e.key==='Enter')addLabel('mobile-label-input')});
 
-// ============================================================
-// IMAGE LIST
-// ============================================================
+// ─────────────────────────────────────────────
+// IMAGE MANAGEMENT
+// ─────────────────────────────────────────────
 function makeImgItem(img,i,mobile){
   const cnt=(annots[img.name]||[]).length;
   const el=document.createElement('div');
@@ -606,44 +828,50 @@ function makeImgItem(img,i,mobile){
   return el;
 }
 function renderImgListAll(){
-  const pc=$('img-list'); pc.innerHTML='';
+  const pc=$('img-list');pc.innerHTML='';
   images.forEach((img,i)=>pc.appendChild(makeImgItem(img,i,false)));
-  if(isMobile()&&currentTab==='images') refreshMobileInner();
+  if(isMobile()&&currentTab==='images')refreshMobileInner();
 }
 async function selectImage(idx){
-  if(idx<0||idx>=images.length) return;
-  curIdx=idx; selAnn=-1; mode='idle';
+  if(idx<0||idx>=images.length)return;
+  curIdx=idx;selAnn=-1;iMode='idle';
   imgObj=await loadImg(images[idx].dataURL);
+  canvas.width=imgObj.naturalWidth;
+  canvas.height=imgObj.naturalHeight;
   $('empty-state').style.display='none';
   canvas.style.display='block';
-  fitCanvas(); redraw();
-  renderImgListAll(); renderAnnList(); updateButtons();
+  fitToViewport();
+  redraw();
+  renderImgListAll();renderAnnList();updateButtons();
   $('mode-hint').textContent='';
+  $('zoom-in-btn').disabled=false;
+  $('zoom-out-btn').disabled=false;
+  $('zoom-fit-btn').disabled=false;
 }
 function updateButtons(){
   const has=images.length>0;
-  $('save-btn').disabled=!has; $('export-btn').disabled=!has; $('clear-btn').disabled=!has;
-  $('prev-btn').disabled=curIdx<=0; $('next-btn').disabled=curIdx>=images.length-1;
+  $('save-btn').disabled=!has;$('export-btn').disabled=!has;$('clear-btn').disabled=!has;
+  $('prev-btn').disabled=curIdx<=0;$('next-btn').disabled=curIdx>=images.length-1;
   $('nav-info').textContent=has?`${curIdx+1} / ${images.length}`:'—';
   $('del-sel-btn').disabled=selAnn<0;
 }
 $('file-input').addEventListener('change',async e=>{
-  const files=Array.from(e.target.files); if(!files.length) return;
+  const files=Array.from(e.target.files);if(!files.length)return;
   let added=0;
   for(const f of files){
-    if(images.find(i=>i.name===f.name)) continue;
+    if(images.find(i=>i.name===f.name))continue;
     images.push({name:f.name,dataURL:await readAsDataURL(f)});
-    if(!annots[f.name]) annots[f.name]=[];
+    if(!annots[f.name])annots[f.name]=[];
     added++;
   }
-  e.target.value=''; renderImgListAll();
-  if(curIdx<0) selectImage(0); else updateButtons();
+  e.target.value='';renderImgListAll();
+  if(curIdx<0)selectImage(0);else updateButtons();
   toast(`${added}枚の画像を読み込みました`);
 });
 
-// ============================================================
+// ─────────────────────────────────────────────
 // ANN LIST
-// ============================================================
+// ─────────────────────────────────────────────
 function makeAnnItem(a,i,mobile){
   const el=document.createElement('div');
   el.className=(mobile?'m-ann-item':'ann-item')+(i===selAnn?' sel':'');
@@ -651,56 +879,48 @@ function makeAnnItem(a,i,mobile){
   el.innerHTML=`<span class="ann-dot" style="background:${colorFor(a.label_id)}"></span><span class="ann-lbl">${lname}</span><span class="ann-del">✕</span>`;
   el.addEventListener('click',e=>{
     if(e.target.classList.contains('ann-del')){deleteAnn(i);return}
-    selAnn=i; $('del-sel-btn').disabled=false;
-    redraw(); renderAnnList();
-    if(isMobile()) closeMobilePanel();
+    selAnn=i;$('del-sel-btn').disabled=false;redraw();renderAnnList();
+    if(isMobile())closeMobilePanel();
   });
   return el;
 }
 function renderAnnList(){
-  const pc=$('ann-list'); pc.innerHTML='';
+  const pc=$('ann-list');pc.innerHTML='';
   if(curIdx>=0){const anns=annots[images[curIdx].name]||[];anns.forEach((a,i)=>pc.appendChild(makeAnnItem(a,i,false)))}
-  if(isMobile()&&currentTab==='annotations') refreshMobileInner();
+  if(isMobile()&&currentTab==='annotations')refreshMobileInner();
   updateButtons();
 }
 function deleteAnn(i){
   const name=images[curIdx].name;
   annots[name].splice(i,1);
   annots[name].forEach((a,j)=>a.image=cropName(name,j));
-  if(selAnn>=annots[name].length) selAnn=annots[name].length-1;
+  if(selAnn>=annots[name].length)selAnn=annots[name].length-1;
   $('del-sel-btn').disabled=selAnn<0;
-  redraw(); renderAnnList(); renderImgListAll();
+  redraw();renderAnnList();renderImgListAll();
 }
 $('del-sel-btn').addEventListener('click',()=>{if(selAnn>=0)deleteAnn(selAnn)});
 $('clear-btn').addEventListener('click',()=>{
-  if(curIdx<0) return;
-  annots[images[curIdx].name]=[]; selAnn=-1;
-  redraw(); renderAnnList(); renderImgListAll(); updateButtons();
+  if(curIdx<0)return;
+  annots[images[curIdx].name]=[];selAnn=-1;
+  redraw();renderAnnList();renderImgListAll();updateButtons();
 });
 
-// ============================================================
+// ─────────────────────────────────────────────
 // NAV
-// ============================================================
+// ─────────────────────────────────────────────
 $('prev-btn').addEventListener('click',()=>selectImage(curIdx-1));
 $('next-btn').addEventListener('click',()=>selectImage(curIdx+1));
-document.addEventListener('keydown',e=>{
-  if(e.target.tagName==='INPUT') return;
-  if(e.key==='ArrowLeft') selectImage(curIdx-1);
-  if(e.key==='ArrowRight') selectImage(curIdx+1);
-  if((e.key==='Delete'||e.key==='Backspace')&&selAnn>=0) deleteAnn(selAnn);
-  if(e.key==='Escape'){selAnn=-1;mode='idle';redraw();renderAnnList();$('mode-hint').textContent=''}
-});
 
-// ============================================================
+// ─────────────────────────────────────────────
 // LABEL MODAL
-// ============================================================
+// ─────────────────────────────────────────────
 function openLabelModal(){renderModalLabels();$('label-modal').classList.add('open')}
 $('modal-none-btn').addEventListener('click',()=>{$('label-modal').classList.remove('open');commitRect(null)});
 $('modal-cancel-btn').addEventListener('click',()=>{$('label-modal').classList.remove('open');pendingRect=null;redraw()});
 
-// ============================================================
+// ─────────────────────────────────────────────
 // MOBILE TABS
-// ============================================================
+// ─────────────────────────────────────────────
 document.querySelectorAll('.tab-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{
     const tab=btn.dataset.tab;
@@ -716,7 +936,7 @@ function openMobilePanel(tab){
   $('mobile-panel').classList.add('open');
 }
 function refreshMobileInner(){
-  const inner=$('mobile-panel-inner'); inner.innerHTML='';
+  const inner=$('mobile-panel-inner');inner.innerHTML='';
   if(currentTab==='images'){
     if(!images.length){inner.innerHTML='<p style="padding:16px;font-size:13px;color:var(--muted)">画像が読み込まれていません</p>';return}
     images.forEach((img,i)=>inner.appendChild(makeImgItem(img,i,true)));
@@ -729,9 +949,9 @@ function refreshMobileInner(){
 }
 function closeMobilePanel(){$('mobile-panel').classList.remove('open')}
 
-// ============================================================
-// JSON
-// ============================================================
+// ─────────────────────────────────────────────
+// JSON / SAVE / LOAD / EXPORT
+// ─────────────────────────────────────────────
 function buildJSON(){
   return{
     labels:labels.map(l=>l.name),
@@ -740,28 +960,23 @@ function buildJSON(){
     ),
   };
 }
-
-// ============================================================
-// SAVE / LOAD / EXPORT
-// ============================================================
 $('save-btn').addEventListener('click',async()=>{
   toast('セーブ中…');
   const zip=new JSZip(),imgF=zip.folder('images');
-  for(const img of images) imgF.file(img.name,img.dataURL.split(',')[1],{base64:true});
+  for(const img of images)imgF.file(img.name,img.dataURL.split(',')[1],{base64:true});
   zip.file('session.json',JSON.stringify({labels,annots,curIdx,selectedLabel},null,2));
   downloadBlob(await zip.generateAsync({type:'blob',compression:'DEFLATE'}),'annotator_save.zip');
   toast('セーブ完了！');
 });
-
 $('load-zip-input').addEventListener('change',async e=>{
-  const file=e.target.files[0]; if(!file) return;
-  e.target.value=''; toast('ロード中…');
+  const file=e.target.files[0];if(!file)return;
+  e.target.value='';toast('ロード中…');
   try{
     const zip=await JSZip.loadAsync(await readAsArrayBuffer(file));
     const sFile=zip.file('session.json');
     if(!sFile){toast('session.jsonが見つかりません');return}
     const s=JSON.parse(await sFile.async('string'));
-    labels=s.labels||[]; annots=s.annots||{}; selectedLabel=s.selectedLabel??null;
+    labels=s.labels||[];annots=s.annots||{};selectedLabel=s.selectedLabel??null;
     images=[];
     const imgF=zip.folder('images');
     if(imgF){
@@ -773,22 +988,21 @@ $('load-zip-input').addEventListener('change',async e=>{
         images.push({name:rel,dataURL:`data:${ext==='png'?'image/png':'image/jpeg'};base64,${b64}`});
       }
     }
-    curIdx=Math.min(s.curIdx??0,images.length-1); selAnn=-1; mode='idle';
-    renderLabels(); renderImgListAll();
-    if(images.length>0) await selectImage(curIdx);
+    curIdx=Math.min(s.curIdx??0,images.length-1);selAnn=-1;iMode='idle';
+    renderLabels();renderImgListAll();
+    if(images.length>0)await selectImage(curIdx);
     toast('ロード完了！');
   }catch(err){console.error(err);toast('ロードに失敗: '+err.message)}
 });
-
 $('export-btn').addEventListener('click',async()=>{
   toast('エクスポート中…');
   const zip=new JSZip(),crops=zip.folder('crops');
   for(const img of images){
     const io=await loadImg(img.dataURL);
-    for(const a of (annots[img.name]||[])){
+    for(const a of(annots[img.name]||[])){
       const oc=document.createElement('canvas');
-      const w=a.rect.bottom_x-a.rect.top_x, h=a.rect.bottom_y-a.rect.top_y;
-      oc.width=w; oc.height=h;
+      const w=a.rect.bottom_x-a.rect.top_x,h=a.rect.bottom_y-a.rect.top_y;
+      oc.width=w;oc.height=h;
       oc.getContext('2d').drawImage(io,a.rect.top_x,a.rect.top_y,w,h,0,0,w,h);
       crops.file(a.image,oc.toDataURL('image/png').split(',')[1],{base64:true});
     }
@@ -798,8 +1012,13 @@ $('export-btn').addEventListener('click',async()=>{
   toast('エクスポート完了！');
 });
 
-window.addEventListener('resize',()=>{if(imgObj){fitCanvas();redraw()}});
-renderLabels(); updateButtons();
+// ─────────────────────────────────────────────
+// RESIZE
+// ─────────────────────────────────────────────
+window.addEventListener('resize',()=>{if(imgObj)fitToViewport()});
+
+// INIT
+renderLabels();updateButtons();
 </script>
 </body>
 </html>
