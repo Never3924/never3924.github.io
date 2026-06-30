@@ -59,6 +59,8 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .lchip .lx{font-size:10px;opacity:.55}
 .lchip .lx:hover{opacity:1}
 #label-add{display:flex;gap:5px}
+#label-io{display:flex;gap:5px;margin-top:6px}
+#label-io .btn{flex:1;padding:0 6px;height:28px;font-size:11px;justify-content:center}
 #label-input{flex:1;min-width:0;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:12px;padding:5px 8px;outline:none;font-family:inherit}
 #label-input:focus{border-color:var(--accent)}
 #label-add .btn{padding:0 10px;height:30px;font-size:16px}
@@ -77,14 +79,10 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 #canvas-wrap{
   position:absolute;
   top:0;left:0;
-  width:100%;height:100%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
   transform-origin:0 0;
-  /* actual pan/zoom applied via transform in JS */
+  /* pan/zoom は transform で JS から制御 */
 }
-#main-canvas{display:block;touch-action:none;user-select:none;image-rendering:pixelated;}
+#main-canvas{display:block;touch-action:none;user-select:none;}
 #empty-state{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--muted);font-size:13px;pointer-events:none;z-index:1}
 #empty-state svg{opacity:.25}
 
@@ -127,6 +125,8 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .m-lchip .lx{font-size:11px;opacity:.55}
 .m-lchip .lx:hover{opacity:1}
 #mobile-label-add{display:flex;gap:6px}
+#mobile-label-io{display:flex;gap:6px;margin-top:8px}
+#mobile-label-io .btn{flex:1;justify-content:center;height:38px;font-size:12px}
 #mobile-label-input{flex:1;min-width:0;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:13px;padding:8px 10px;outline:none;font-family:inherit}
 #mobile-label-input:focus{border-color:var(--accent)}
 #mobile-label-add .btn{height:40px;padding:0 14px}
@@ -186,6 +186,10 @@ body.pan-mode.panning #canvas-viewport { cursor: grabbing; }
         <input type="text" id="label-input" placeholder="新しいラベル" maxlength="30">
         <button class="btn" id="add-label-btn">＋</button>
       </div>
+      <div id="label-io">
+        <button class="btn" id="export-labels-btn" title="ラベルをJSONで保存">⬇ JSON</button>
+        <label class="btn" title="ラベルJSONを読み込む">⬆ JSON<input type="file" id="import-labels-input" accept=".json" hidden></label>
+      </div>
     </div>
   </aside>
 
@@ -238,6 +242,10 @@ body.pan-mode.panning #canvas-viewport { cursor: grabbing; }
       <input type="text" id="mobile-label-input" placeholder="新しいラベル" maxlength="30">
       <button class="btn" id="mobile-add-label-btn">＋ 追加</button>
     </div>
+    <div id="mobile-label-io">
+      <button class="btn" id="mobile-export-labels-btn">⬇ JSONエクスポート</button>
+      <label class="btn">⬆ JSONインポート<input type="file" id="mobile-import-labels-input" accept=".json" hidden></label>
+    </div>
   </div>
 </div>
 
@@ -248,6 +256,33 @@ body.pan-mode.panning #canvas-viewport { cursor: grabbing; }
     <div class="modal-row">
       <button class="btn" id="modal-none-btn">ラベルなし</button>
       <button class="btn danger" id="modal-cancel-btn">キャンセル</button>
+    </div>
+  </div>
+</div>
+
+<!-- ラベルインポート時：追加 or 置き換えの確認 -->
+<div class="modal-bg" id="import-mode-modal">
+  <div class="modal">
+    <h2>📥 ラベルのインポート</h2>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px">
+      読み込んだラベルをどう反映しますか？既存のアノテーションのラベル参照は、置き換えを選ぶとリセットされる場合があります。
+    </p>
+    <div class="modal-row" style="flex-direction:column">
+      <button class="btn primary" id="import-merge-btn" style="justify-content:center;height:44px;margin-bottom:8px">既存に追加（重複はスキップ）</button>
+      <button class="btn danger" id="import-replace-btn" style="justify-content:center;height:44px;margin-bottom:8px">すべて置き換える</button>
+      <button class="btn" id="import-cancel-btn" style="justify-content:center;height:44px">キャンセル</button>
+    </div>
+  </div>
+</div>
+
+<!-- 起動時：前回のラベルを復元するか確認 -->
+<div class="modal-bg" id="restore-modal">
+  <div class="modal">
+    <h2>🏷 前回のラベルが見つかりました</h2>
+    <p id="restore-label-preview" style="font-size:13px;color:var(--muted);margin-bottom:16px"></p>
+    <div class="modal-row">
+      <button class="btn primary" id="restore-yes-btn" style="flex:1;justify-content:center;height:44px">使用する</button>
+      <button class="btn" id="restore-no-btn" style="flex:1;justify-content:center;height:44px">使わない</button>
     </div>
   </div>
 </div>
@@ -457,23 +492,40 @@ function drawRect(rect,color,selected,dashed=false){
 // GET VIEWPORT-RELATIVE POSITION
 // ─────────────────────────────────────────────
 function getVpPos(e){
+  // viewport 基準の座標（パン計算用）
   const r=viewport.getBoundingClientRect();
   const src=e.touches?e.touches[0]:e;
   return{x:src.clientX-r.left, y:src.clientY-r.top};
 }
 
+// クライアント座標 → 画像座標
+// canvas.getBoundingClientRect() を使うことで
+// CSS transform 後の実際の描画位置を正確に反映する
+function clientToImg(clientX, clientY){
+  const r=canvas.getBoundingClientRect();
+  // canvas は naturalWidth×naturalHeight で描画し、
+  // CSS transform で vpZoom 倍されているので
+  // getBoundingClientRect().width = naturalWidth * vpZoom
+  const scaleX=canvas.width /r.width;
+  const scaleY=canvas.height/r.height;
+  return{
+    x:(clientX-r.left)*scaleX,
+    y:(clientY-r.top )*scaleY,
+  };
+}
+
 // ─────────────────────────────────────────────
 // CURSOR
 // ─────────────────────────────────────────────
-function updateCursor(imgPt){
+function updateCursor(ip){
   if(!imgObj||curIdx<0){canvas.style.cursor='default';return}
   if(spaceDown){$('mode-hint').textContent='スペース: パン';return}
   if(selAnn>=0){
     const rect=(annots[images[curIdx].name]||[])[selAnn];
     if(rect){
-      const hi=hitHandle(imgPt,rect);
+      const hi=hitHandle(ip,rect);
       if(hi>=0){canvas.style.cursor=HANDLE_CURSORS[hi];$('mode-hint').textContent='ハンドル: リサイズ';return}
-      if(hitRect(imgPt,rect)){canvas.style.cursor='move';$('mode-hint').textContent='内側: 移動';return}
+      if(hitRect(ip,rect)){canvas.style.cursor='move';$('mode-hint').textContent='内側: 移動';return}
     }
   }
   canvas.style.cursor='crosshair';
@@ -493,8 +545,7 @@ function onMouseDown(e){
   e.preventDefault();
   if(!imgObj) return;
 
-  const vp=getVpPos(e);
-  const ip=vpToImg(vp.x,vp.y);
+  const ip=clientToImg(e.clientX,e.clientY);
 
   // Pan mode (space)
   if(spaceDown){
@@ -525,8 +576,7 @@ function onMouseDown(e){
 }
 
 function onMouseMove(e){
-  const vp=getVpPos(e);
-  const ip=vpToImg(vp.x,vp.y);
+  const ip=clientToImg(e.clientX,e.clientY);
 
   if(iMode==='idle'){ updateCursor(ip); return; }
   e.preventDefault();
@@ -612,8 +662,7 @@ function onTouchStart(e){
   isPinching=false;
 
   // Single touch → same as mousedown logic
-  const vp=getVpPos(e);
-  const ip=vpToImg(vp.x,vp.y);
+  const ip=clientToImg(touches[0].clientX,touches[0].clientY);
   const anns=annots[images[curIdx].name]||[];
 
   if(selAnn>=0 && selAnn<anns.length){
@@ -657,8 +706,7 @@ function onTouchMove(e){
 
   if(isPinching) return; // finger lifted to 1 but was pinching
 
-  const vp=getVpPos(e);
-  const ip=vpToImg(vp.x,vp.y);
+  const ip=clientToImg(touches[0].clientX,touches[0].clientY);
   const anns=annots[images[curIdx].name]||[];
 
   if(iMode==='draw'){
@@ -760,7 +808,7 @@ function commitRect(lid){
 // ─────────────────────────────────────────────
 // LABELS
 // ─────────────────────────────────────────────
-function renderLabels(){renderPcLabels();renderMobileLabels();renderModalLabels()}
+function renderLabels(){renderPcLabels();renderMobileLabels();renderModalLabels();saveLabelsToStorage();}
 function renderPcLabels(){
   const el=$('label-list');el.innerHTML='';
   labels.forEach((lbl,i)=>{
@@ -815,6 +863,140 @@ $('add-label-btn').addEventListener('click',()=>addLabel('label-input'));
 $('label-input').addEventListener('keydown',e=>{if(e.key==='Enter')addLabel('label-input')});
 $('mobile-add-label-btn').addEventListener('click',()=>addLabel('mobile-label-input'));
 $('mobile-label-input').addEventListener('keydown',e=>{if(e.key==='Enter')addLabel('mobile-label-input')});
+
+// ─────────────────────────────────────────────
+// LABEL JSON EXPORT / IMPORT
+// ─────────────────────────────────────────────
+const LABEL_STORAGE_KEY = 'annotator_labels_v1';
+
+function buildLabelJSON(){
+  // ラベル単体の共有用フォーマット
+  return { labels: labels.map(l => l.name) };
+}
+
+function exportLabelsJSON(){
+  if(!labels.length){ toast('ラベルがありません'); return; }
+  const blob = new Blob([JSON.stringify(buildLabelJSON(), null, 2)], {type:'application/json'});
+  downloadBlob(blob, 'labels.json');
+  toast('ラベルをエクスポートしました');
+}
+$('export-labels-btn').addEventListener('click', exportLabelsJSON);
+$('mobile-export-labels-btn').addEventListener('click', exportLabelsJSON);
+
+// インポート: ファイル読み込み → 名前リストを抽出 → モード選択モーダルを開く
+let pendingImportNames = null;
+
+function extractLabelNames(json){
+  // { labels: [...] } 形式、もしくは生の配列 [...] のどちらも許容
+  if(Array.isArray(json)) return json.filter(n=>typeof n==='string');
+  if(json && Array.isArray(json.labels)) return json.labels.filter(n=>typeof n==='string');
+  return null;
+}
+
+async function handleLabelImportFile(file){
+  try{
+    const text=await file.text();
+    const json=JSON.parse(text);
+    const names=extractLabelNames(json);
+    if(!names || !names.length){ toast('有効なラベルJSONではありません'); return; }
+    pendingImportNames=names;
+    $('import-mode-modal').classList.add('open');
+  }catch(err){
+    console.error(err);
+    toast('JSONの読み込みに失敗しました');
+  }
+}
+$('import-labels-input').addEventListener('change', e=>{
+  const f=e.target.files[0]; e.target.value='';
+  if(f) handleLabelImportFile(f);
+});
+$('mobile-import-labels-input').addEventListener('change', e=>{
+  const f=e.target.files[0]; e.target.value='';
+  if(f) handleLabelImportFile(f);
+});
+
+$('import-merge-btn').addEventListener('click', ()=>{
+  if(!pendingImportNames) return;
+  let added=0;
+  pendingImportNames.forEach(name=>{
+    if(!labels.find(l=>l.name===name)){
+      labels.push({name, color:COLORS[labels.length%COLORS.length]});
+      added++;
+    }
+  });
+  pendingImportNames=null;
+  $('import-mode-modal').classList.remove('open');
+  renderLabels();
+  toast(`${added}件のラベルを追加しました`);
+});
+
+$('import-replace-btn').addEventListener('click', ()=>{
+  if(!pendingImportNames) return;
+  // 既存のラベル参照（label_id）は置き換え後に意味が変わるためクリアする
+  const hadAnnotationsWithLabel = Object.values(annots).some(arr=>arr.some(a=>a.label_id!=null));
+  labels = pendingImportNames.map((name,i)=>({name, color:COLORS[i%COLORS.length]}));
+  if(hadAnnotationsWithLabel){
+    Object.values(annots).forEach(arr=>arr.forEach(a=>{ a.label_id=null; }));
+  }
+  selectedLabel=null;
+  pendingImportNames=null;
+  $('import-mode-modal').classList.remove('open');
+  renderLabels(); redraw(); renderAnnList();
+  toast(hadAnnotationsWithLabel
+    ? 'ラベルを置き換えました（既存の割り当てはリセットされました）'
+    : 'ラベルを置き換えました');
+});
+
+$('import-cancel-btn').addEventListener('click', ()=>{
+  pendingImportNames=null;
+  $('import-mode-modal').classList.remove('open');
+});
+
+// ─────────────────────────────────────────────
+// LABEL LOCALSTORAGE（次回起動時に復元するか確認）
+// ─────────────────────────────────────────────
+let suppressLabelStorageWrite = false; // 起動時の確認モーダル表示中は保存をスキップ
+
+function saveLabelsToStorage(){
+  if(suppressLabelStorageWrite) return;
+  try{
+    if(labels.length){
+      localStorage.setItem(LABEL_STORAGE_KEY, JSON.stringify(labels.map(l=>l.name)));
+    }else{
+      localStorage.removeItem(LABEL_STORAGE_KEY);
+    }
+  }catch(err){ console.warn('LocalStorage保存に失敗:', err); }
+}
+
+function checkStoredLabelsOnBoot(){
+  let stored=null;
+  try{
+    const raw=localStorage.getItem(LABEL_STORAGE_KEY);
+    if(raw) stored=JSON.parse(raw);
+  }catch(err){ console.warn('LocalStorage読み込みに失敗:', err); }
+
+  if(!stored || !Array.isArray(stored) || !stored.length) return;
+  if(labels.length) return; // 既にラベルがある場合は聞かない
+
+  suppressLabelStorageWrite = true; // ユーザーが選択するまで保存をブロック
+
+  $('restore-label-preview').textContent = stored.slice(0,8).join('、') + (stored.length>8 ? ' 他' : '');
+  $('restore-modal').classList.add('open');
+
+  $('restore-yes-btn').onclick = ()=>{
+    labels = stored.map((name,i)=>({name, color:COLORS[i%COLORS.length]}));
+    $('restore-modal').classList.remove('open');
+    suppressLabelStorageWrite = false;
+    renderLabels();
+    toast('前回のラベルを復元しました');
+  };
+  $('restore-no-btn').onclick = ()=>{
+    $('restore-modal').classList.remove('open');
+    suppressLabelStorageWrite = false;
+    // 「使わない」を選んだ場合、既存の保存データはそのまま残しておく
+    // （ユーザーが明示的にラベルを編集するまでは消さない）
+  };
+}
 
 // ─────────────────────────────────────────────
 // IMAGE MANAGEMENT
@@ -1018,7 +1200,10 @@ $('export-btn').addEventListener('click',async()=>{
 window.addEventListener('resize',()=>{if(imgObj)fitToViewport()});
 
 // INIT
-renderLabels();updateButtons();
+updateButtons();
+checkStoredLabelsOnBoot(); // 先にチェック（確認モーダルでYesが押されたらlabelsがセットされrenderLabelsが呼ばれる）
+renderLabels(); // 初期描画（ラベルが無ければ何も保存されない）
+
 </script>
 </body>
 </html>
